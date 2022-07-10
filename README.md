@@ -29,7 +29,6 @@ I am aware that the need for a client-id will probably dissuade about 99% of pot
 ## Possible Improvements in the future, unordered
 
 * Configurable naming scheme for files
-* Sanitizing stream titles/categories to make sure they don't break filenames (did not have an issue *yet*)
 * Maybe a little configuration TUI
 * Option to rotate files, Stream recordings add up quick. Maybe some functionality to delete after x days or x TB filled
 * Skipping reruns: As soon as I figure out how, the helix api provides a "type" value, but infuriatingly it only distinguishes between 'live' and 'error' (doesn't exist for not being live)
