@@ -115,9 +115,13 @@ fn create_command(archive_dir: &PathBuf, channel: &ChannelInfo) -> String {
     let game_name = &channel.game_name;
     let title = &channel.title;
     let time = get_current_time_iso_formatted();
-    let filename = format!("{time}_{user_name}_{game_name}_{title}.mkv");
+    let filename = sanitize_filename(format!("{time}_{user_name}_{game_name}_{title}.mkv"));
     let target = archive_dir.join(&channel.user_name).join(filename).into_os_string().into_string().unwrap();
     format!("streamlink https://twitch.tv/{login} best --twitch-disable-hosting -o \"{target}\"")
+}
+
+fn sanitize_filename(filename: String) -> String {
+    sanitize_filename::sanitize_with_options(filename, sanitize_filename::Options{ truncate: true, windows: true, replacement: "%"})
 }
 
 fn init_logging() {
