@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 use urlencoding::encode;
 use crate::cached;
-use log::{info};
+use log::{error, info};
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Token {
@@ -56,9 +56,21 @@ pub fn get_live_channels(channel_names: &Vec<String>) -> Vec<ChannelInfo> {
         Value::Object(j) => j,
         _ => panic!("Unexpected Json")
     };
-    let results = match json.get("data").unwrap() {
-        Value::Array(j) => j,
-        _ => panic!("Unexpected Json")
+
+    let results: &Vec<Value> = match json.get("data") {
+        Some(data) => {
+            match data {
+                Value::Array(j) => j,
+                j => {
+                    error!("Invalid json {:?}", j);
+                    return Vec::new();
+                }
+            }
+        }
+        None => {
+            error!("No data in json response {:?}", json);
+            return Vec::new();
+        }
     };
 
     parse_json_results(results)
