@@ -10,6 +10,7 @@ use std::env::current_dir;
 use std::time::Duration;
 use log::{error, info};
 use cached::proc_macro::cached;
+use time::{macros::format_description};
 
 extern crate simplelog;
 extern crate core;
@@ -126,9 +127,15 @@ fn sanitize_filename(filename: String) -> String {
 
 fn init_logging() {
     CombinedLogger::init(vec![
-        TermLogger::new(LevelFilter::Info, Config::default(), TerminalMode::Mixed, ColorChoice::Auto),
-        WriteLogger::new(LevelFilter::Debug, Config::default(), get_log_file().unwrap()),
+        TermLogger::new(LevelFilter::Info, get_log_config(), TerminalMode::Mixed, ColorChoice::Auto),
+        WriteLogger::new(LevelFilter::Debug, get_log_config(), get_log_file().unwrap()),
     ]).unwrap();
+}
+
+fn get_log_config() -> Config {
+    let mut builder = ConfigBuilder::new();
+    builder.set_time_format_custom(format_description!("[year]-[month]-[day]T[hour]:[minute]:[second].[subsecond digits:6]"));
+    builder.build()
 }
 
 fn get_log_file() -> Result<File, io::Error> {
